@@ -105,8 +105,11 @@ function timeSpanToString(startDate, endDate) {
  *    Date.UTC(2016,3,5,18, 0) => Math.PI
  *    Date.UTC(2016,3,5,21, 0) => Math.PI/2
  */
-function angleBetweenClockHands(/* date */) {
-  throw new Error('Not implemented');
+function angleBetweenClockHands(date) {
+  const val1 = (date.getUTCMinutes() * 6) % 360;
+  const val2 = ((date.getUTCHours() * 30) % 360) + val1 / 12;
+  const result = (Math.abs(val2 - val1) * Math.PI) / 180;
+  return (result > Math.PI) ? 2 * Math.PI - result : result;
 }
 
 
