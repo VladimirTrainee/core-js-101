@@ -310,8 +310,10 @@ function isCreditCardNumber(/* ccn */) {
  *   10000 ( 1+0+0+0+0 = 1 ) => 1
  *   165536 (1+6+5+5+3+6 = 26,  2+6 = 8) => 8
  */
-function getDigitalRoot(/* num */) {
-  throw new Error('Not implemented');
+function getDigitalRoot(num) {
+  const arr = Array.from(String(num).split(''));
+  const sum = arr.reduce((acc, val) => acc + Number(val), 0);
+  return (String(sum).length > 1) ? getDigitalRoot(sum) : sum;
 }
 
 
@@ -336,8 +338,17 @@ function getDigitalRoot(/* num */) {
  *   '{)' = false
  *   '{[(<{[]}>)]}' = true
  */
-function isBracketsBalanced(/* str */) {
-  throw new Error('Not implemented');
+function isBracketsBalanced(str) {
+  let value = str;
+  let newVal = str;
+  do {
+    value = newVal;
+    newVal = value.replaceAll('[]', '')
+      .replaceAll('{}', '')
+      .replaceAll('()', '')
+      .replaceAll('<>', '');
+  } while (value !== '' && newVal !== value);
+  return value.length < 1;
 }
 
 
@@ -361,8 +372,14 @@ function isBracketsBalanced(/* str */) {
  *    365, 4  => '11231'
  *    365, 10 => '365'
  */
-function toNaryString(/* num, n */) {
-  throw new Error('Not implemented');
+function toNaryString(num, n) {
+  let str = '';
+  let val = num;
+  while (val > 0) {
+    str = String(val % n) + str;
+    val = Math.trunc(val / n);
+  }
+  return str;
 }
 
 
@@ -378,8 +395,23 @@ function toNaryString(/* num, n */) {
  *   ['/web/assets/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/verbalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  let index = 0;
+  let str = '';
+  let check = true;
+  while (check) {
+    str += pathes[0][index];
+    for (let i = 0; i < pathes.length; i += 1) {
+      check = check && index < pathes[i].length && pathes[i][index] === str[str.length - 1];
+      if (!check) {
+        str = str.substring(0, str.length - 1);
+        break;
+      }
+    }
+    index += 1;
+  }
+  str = str.substring(0, str.lastIndexOf('/') + 1);
+  return str;
 }
 
 
