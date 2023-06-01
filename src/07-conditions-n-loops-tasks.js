@@ -292,8 +292,20 @@ function reverseInteger(num) {
  *   5436468789016589 => false
  *   4916123456789012 => false
  */
-function isCreditCardNumber(/* ccn */) {
-  throw new Error('Not implemented');
+function isCreditCardNumber(ccn) {
+  const str = String(ccn);
+  let even = false;
+  let n = 0;
+  for (let i = str.length - 1; i >= 0; i -= 1) {
+    let digit = Number(str[i]);
+    if (even) {
+      digit *= 2;
+      if (digit > 9) digit -= 9;
+    }
+    n += digit + 0 * n;
+    even = !even;
+  }
+  return n % 10 === 0;
 }
 
 /**
@@ -433,8 +445,23 @@ function getCommonDirectoryPath(pathes) {
  *                         [ 6 ]]
  *
  */
-function getMatrixProduct(/* m1, m2 */) {
-  throw new Error('Not implemented');
+function getMatrixProduct(m1, m2) {
+  const m3 = [];
+  const sum = (y, x) => {
+    let s = 0;
+    for (let i = 0; i < m1[0].length; i += 1) {
+      s += m1[y][i] * m2[i][x];
+    }
+    return s;
+  };
+
+  for (let y = 0; y < m1.length; y += 1) {
+    m3.push([]);
+    for (let x = 0; x < m2[0].length; x += 1) {
+      m3[y].push(sum(y, x));
+    }
+  }
+  return m3;
 }
 
 
@@ -468,8 +495,32 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+function evaluateTicTacToePosition(position) {
+  let result;
+  const count = (char) => {
+    let num = 0;
+    for (let i = 0; i < 3; i += 1) {
+      if (position[i][0] === position[i][1]
+        && position[i][1] === position[i][2]
+        && position[i][2] === char) num += 1;
+      if (position[0][i] === position[1][i]
+        && position[1][i] === position[2][i]
+        && position[2][i] === char) num += 1;
+    }
+    if (position[0][0] === position[1][1]
+      && position[1][1] === position[2][2]
+      && position[2][2] === char) num += 1;
+
+    if (position[0][2] === position[1][1]
+      && position[1][1] === position[2][0]
+      && position[2][0] === char) num += 1;
+    return num;
+  };
+  const cross = count('X');
+  const zero = count('0');
+  if (cross === zero) result = undefined;
+  else result = (count('X') > count('0')) ? 'X' : '0';
+  return result;
 }
 
 
