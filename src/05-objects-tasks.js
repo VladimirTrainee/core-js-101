@@ -118,32 +118,52 @@ function fromJSON(proto, json) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  elements: [],
+  order: ['element', 'id', 'class', 'attr', 'pseudoClass', 'pseudoElement'],
+  stringify() {
+    const res = this.elements.join('');
+    this.elements = [];
+    return res;
+  },
+  error: 0,
+  errors: [
+    'Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element',
+    'Element, id and pseudo-element should not occur more then one time inside the selector',
+  ],
+  validate(type) {
+    if (!this.error) {
+      if (this.order.indexOf(type) < this.order.indexOf(this.prevType)) this.error = 1;
+      if (type === this.prevType && ['element', 'id', 'pseudoElement'].includes(type)) this.error = 2;
+    }
+    if (this.error) throw new Error(this.errors[this.error - 1]);
+    return type;
+  },
+  element(value) {
+    return { ...this, prevType: this.validate('element'), elements: [...this.elements, value] };
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    return { ...this, prevType: this.validate('id'), elements: [...this.elements, '#', value] };
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    return { ...this, prevType: this.validate('class'), elements: [...this.elements, '.', value] };
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    return { ...this, prevType: this.validate('attr'), elements: [...this.elements, '[', value, ']'] };
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    return { ...this, prevType: this.validate('pseudoClass'), elements: [...this.elements, ':', value] };
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    return { ...this, prevType: this.validate('pseudoElement'), elements: [...this.elements, '::', value] };
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    return { ...this, elements: [...selector1.elements, ` ${combinator} `, ...selector2.elements] };
   },
 };
 
